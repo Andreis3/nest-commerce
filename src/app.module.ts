@@ -6,7 +6,15 @@ import { SharedModule } from './shared/shared.module';
 import { AuthModule } from './auth/auth.module';
 
 @Module({
-  imports: [MongooseModule.forRoot(process.env.MONGO_URI), SharedModule, AuthModule],
+  imports: [
+    MongooseModule.forRoot(process.env.MONGO_URI, {
+      useNewUrlParser: true,
+      useFindAndModify: true,
+      useUnifiedTopology: true
+    }),
+    SharedModule,
+    AuthModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
