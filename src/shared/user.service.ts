@@ -29,7 +29,7 @@ export class UserService {
     return this.sanitizeUser(createUser);
   }
 
-  async find() {
+  async findAll() {
     return await this.userModel.find();
   }
 

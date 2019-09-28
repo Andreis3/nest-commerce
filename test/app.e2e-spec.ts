@@ -40,7 +40,6 @@ describe('AUTH', () => {
       .set('Accept', 'application/json')
       .send(user)
       .expect(({ body }) => {
-        console.log(body);
         expect(body.token).toBeDefined();
         expect(body.user.username).toEqual('username');
         expect(body.user.password).toBeUndefined();
@@ -76,7 +75,6 @@ describe('AUTH', () => {
       .set('Accept', 'application/json')
       .send(user)
       .expect(({ body }) => {
-        console.log(body);
         expect(body.token).toBeDefined();
         expect(body.user.username).toEqual('username');
         expect(body.user.password).toBeUndefined();
