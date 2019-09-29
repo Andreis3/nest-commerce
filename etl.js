@@ -2,13 +2,13 @@ const axios = require('axios');
 
 (async () => {
   try{
-    const { data } = await axios.post('http://localhost:3000/auth/login', {
+    const { data } = await axios.post('http://localhost:3000/api/auth/login', {
       username: 'athena',
       password: 'athena',
     });
     console.log(data);
     const { token } = data;
-    const { data: res2 } = await axios.get('http://localhost:3000/auth', {
+    const { data: res2 } = await axios.get('http://localhost:3000/api/auth', {
       headers: { authorization: `Bearer ${token}` },
     });
     console.log(res2)
