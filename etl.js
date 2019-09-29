@@ -7,13 +7,17 @@ const axios = require('axios');
       password: 'athena',
     });
     console.log(data);
-    const { token } = data; 
+    const { token } = data;
     const { data: res2 } = await axios.get('http://localhost:3000/auth', {
       headers: { authorization: `Bearer ${token}` },
     });
-    console.log(res2)    
+    console.log(res2)
   }catch (err) {
     console.log(err)
   }
-  
+
 })();
+
+//"start": "ts-node -r tsconfig-paths/register src/main.ts",
+//"start:dev": "tsc-watch -p tsconfig.build.json --onSuccess \"node dist/main.js\"",
+//"test": "jest"

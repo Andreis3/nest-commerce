@@ -29,9 +29,9 @@ export class UserService {
     return this.sanitizeUser(createUser);
   }
 
-  async findAll() {
-    return await this.userModel.find();
-  }
+  // async findAll() {
+  //   return await this.userModel.find();
+  // }
 
   async findByLogin(userDTO: LoginDTO) {
     const { username, password } = userDTO;
