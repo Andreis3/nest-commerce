@@ -1,18 +1,15 @@
-import 'dotenv/config';
 import { HttpStatus } from '@nestjs/common';
-import * as request from 'supertest';
+import 'dotenv/config';
 import * as mongoose from 'mongoose';
-
-import { RegisterDTO, LoginDTO } from '../src/auth/auth.dto';
-import { app } from './constants';
-
-
+import * as request from 'supertest';
+import { LoginDTO, RegisterDTO } from '../src/auth/auth.dto';
+import { app, database } from './constants';
 
 beforeAll(async () => {
   await mongoose.connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
     useFindAndModify: true,
-    useUnifiedTopology: true
+    useUnifiedTopology: true,
   });
   await mongoose.connection.db.dropDatabase();
 });
@@ -22,7 +19,7 @@ afterAll(async done => {
 });
 
 describe('AUTH', () => {
-  const user: RegisterDTO | LoginDTO = {
+  const user: RegisterDTO = {
     username: 'username',
     password: 'password',
   };
@@ -30,7 +27,7 @@ describe('AUTH', () => {
   const sellerRegister: RegisterDTO = {
     username: 'seller',
     password: 'password',
-    seller: true
+    seller: true,
   };
 
   const sellerLogin: LoginDTO = {
@@ -47,12 +44,10 @@ describe('AUTH', () => {
       .set('Accept', 'application/json')
       .send(user)
       .expect(({ body }) => {
-        userToken=body.token;
         expect(body.token).toBeDefined();
         expect(body.user.username).toEqual('username');
         expect(body.user.password).toBeUndefined();
         expect(body.user.seller).toBeFalsy();
-
       })
       .expect(HttpStatus.CREATED);
   });
@@ -63,7 +58,6 @@ describe('AUTH', () => {
       .set('Accept', 'application/json')
       .send(sellerRegister)
       .expect(({ body }) => {
-        sellerToken=body.token;
         expect(body.token).toBeDefined();
         expect(body.user.username).toEqual('seller');
         expect(body.user.password).toBeUndefined();
@@ -79,21 +73,45 @@ describe('AUTH', () => {
       .send(user)
       .expect(({ body }) => {
         expect(body.message).toEqual('User already exists');
-        expect(body.code).toEqual(HttpStatus.UNPROCESSABLE_ENTITY);
       })
       .expect(HttpStatus.UNPROCESSABLE_ENTITY);
-  })
+  });
 
-  it('should login', () => {
+  it('should login user', () => {
     return request(app)
       .post('/auth/login')
       .set('Accept', 'application/json')
       .send(user)
       .expect(({ body }) => {
+        userToken = body.token;
+
         expect(body.token).toBeDefined();
         expect(body.user.username).toEqual('username');
         expect(body.user.password).toBeUndefined();
       })
       .expect(HttpStatus.CREATED);
+  });
+
+  it('should login seller', () => {
+    return request(app)
+      .post('/auth/login')
+      .set('Accept', 'application/json')
+      .send(sellerLogin)
+      .expect(({ body }) => {
+        sellerToken = body.token;
+
+        expect(body.token).toBeDefined();
+        expect(body.user.username).toEqual('seller');
+        expect(body.user.password).toBeUndefined();
+        expect(body.user.seller).toBeTruthy();
+      });
+  });
+
+  it('should respect seller token', () => {
+    return request(app)
+      .get('/product/mine')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${sellerToken}`)
+      .expect(200);
   });
 });
