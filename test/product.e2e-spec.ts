@@ -59,7 +59,7 @@ describe('PRODUCT', () => {
 
   it('should create a products', () => {
     return request(app)
-      .post('/produt')
+      .post('/product')
       .set('Authorization', `Bearer ${sellerToken}`)
       .set('Accept', 'application/json')
       .send(product)
@@ -77,7 +77,7 @@ describe('PRODUCT', () => {
 
   it('should read a products', () => {
     return request(app)
-      .get(`/produt/${productId}`)
+      .get(`/product/${productId}`)
       .expect(({ body }) => {
         expect(body._id).toEqual(productId);
         expect(body.title).toEqual(product.title);
@@ -91,7 +91,7 @@ describe('PRODUCT', () => {
 
   it('should update a products', () => {
     return request(app)
-      .put(`/produt/${productId}`)
+      .put(`/product/${productId}`)
       .set('Accept', 'application/json')
       .set('Authorization', `Bearer ${sellerToken}`)
       .send({ title: 'new tilte' })
